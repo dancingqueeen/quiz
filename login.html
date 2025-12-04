@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - User Portal</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="header">
+                <div class="icon">🔐</div>
+                <h1>Login</h1>
+                <p class="subtitle">Enter your credentials to continue</p>
+            </div>
+            <a href="home.html" class="back-link">← Back to Home</a>
+            <form action="login.php" method="POST" class="login-form">
+                <div class="form-group">
+                    <label for="username">Email (Username) *</label>
+                    <input type="email" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="login-btn">🔐 Login</button>
+                </div>
+                <div class="register-link">
+                    Don't have an account? <a href="register.html">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - User Portal</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <div class="header">
+                <div class="icon">📋</div>
+                <h1>Create Account</h1>
+                <p class="subtitle">Fill in the form below to register</p>
+            </div>
+            <a href="home.html" class="back-link">← Back to Home</a>
+            <form action="register_process.php" method="POST" enctype="multipart/form-data" class="reg-form">
+                <div class="form-group">
+                    <label for="completeName">Complete Name *</label>
+                    <input type="text" id="completeName" name="completeName" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Email (Username) *</label>
+                    <input type="email" id="username" name="username" required>
+                    <div class="hint">We'll use this email as your username</div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-hint" id="passwordHint">Enter at least 8 characters</div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <div class="match-hint" id="matchHint"></div>
+                </div>
+                <div class="form-group">
+                    <label for="profilePicture">Profile Picture</label>
+                    <input type="file" id="profilePicture" name="profilePicture" accept=".jpg,.jpeg">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="submit-btn">📝 Register Account</button>
+                </div>
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

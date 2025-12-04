@@ -1,0 +1,86 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+}
+
+.header {
+    background: #007bff;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.logout {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    background: #0056b3;
+    border-radius: 4px;
+}
+
+.logout:hover {
+    background: #004085;
+}
+
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.welcome-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.welcome-message {
+    margin-bottom: 30px;
+}
+
+.welcome-message h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.welcome-message p {
+    color: #666;
+    font-size: 16px;
+}
+
+.profile {
+    margin-bottom: 30px;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #007bff;
+}
+
+.logout-btn a {
+    display: inline-block;
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.logout-btn a:hover {
+    background: #c82333;
+}
