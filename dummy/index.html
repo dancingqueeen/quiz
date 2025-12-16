@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Travelya - Your Adventure Awaits</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="chatbot.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* National Geographic Full Color Palette */
+            --natgeo-yellow: #FFD51C;
+            --natgeo-black: #000000;
+            --natgeo-white: #FFFFFF;
+            --natgeo-dark-gray: #333333;
+            --natgeo-light-gray: #F5F5F5;
+            --natgeo-earth-green: #4A7729;
+            --natgeo-ocean-blue: #005587;
+            --natgeo-sand-beige: #D6C6A8;
+            --natgeo-rust-red: #A23C26;
+
+            /* Extended palette */
+            --primary: var(--natgeo-yellow);
+            --secondary: var(--natgeo-ocean-blue);
+            --accent: var(--natgeo-earth-green);
+            --danger: var(--natgeo-rust-red);
+            --neutral: var(--natgeo-sand-beige);
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Additional styles for access control */
+        .nav-link.restricted-link {
+            position: relative;
+        }
+        
+        .nav-link.restricted-link::after {
+            content: "Login First";
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: var(--natgeo-white);
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link.restricted-link::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--secondary) transparent transparent transparent;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+        }
+        
+        .nav-link.restricted-link:hover::after,
+        .nav-link.restricted-link:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Shake animation for restricted buttons */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .nav-link.restricted-link.shake {
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        .feature-box.shake,
+        .booking-btn.shake,
+        .cta-btn.shake,
+        .gallery-box.shake,
+        .carousel-slide.shake {
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        /* ACCESS MODAL - National Geographic Style */
+        .access-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .access-modal.active {
+            display: flex;
+            animation: modalFadeIn 0.4s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(5px);
+            }
+        }
+        
+        .access-modal-content {
+            background: var(--natgeo-white);
+            padding: var(--space-xl) var(--space-lg);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .access-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--primary) 0%, 
+                var(--secondary) 33%, 
+                var(--accent) 66%, 
+                var(--danger) 100%);
+            background-size: 300% 100%;
+            animation: gradientFlow 3s ease infinite;
+        }
+        
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .access-icon-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: var(--space-lg);
+            z-index: 1;
+        }
+        
+        .access-icon {
+            font-size: 80px;
+            background: linear-gradient(135deg, 
+                var(--primary) 0%, 
+                var(--secondary) 50%, 
+                var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: iconPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+        }
+        
+        .access-modal-content h2 {
+            color: var(--secondary);
+            margin-bottom: var(--space-md);
+            font-weight: 800;
+            font-size: 32px;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .access-modal-content p {
+            color: var(--natgeo-dark-gray);
+            margin-bottom: var(--space-xl);
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 500;
+        }
+        
+        .access-modal-content .btn {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: var(--natgeo-white);
+            border: none;
+            padding: var(--space-md) var(--space-xl);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: var(--shadow-md);
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            z-index: 1;
+            border: 2px solid var(--secondary);
+        }
+        
+        .access-modal-content .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            letter-spacing: 1.5px;
+        }
+        
+        .access-modal-content .btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        .access-modal-content .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.6s;
+        }
+        
+        .access-modal-content .btn:hover::before {
+            left: 100%;
+        }
+        
+        .close-btn {
+            background: var(--primary);
+            color: var(--natgeo-black);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--natgeo-black);
+            font-weight: bold;
+        }
+        
+        .close-btn:hover {
+            background: var(--danger);
+            color: var(--natgeo-white);
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: var(--shadow-md);
+            border-color: var(--danger);
+        }
+        
+        .demo-note {
+            margin-top: var(--space-xl);
+            padding: var(--space-md);
+            background: var(--natgeo-light-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--natgeo-dark-gray);
+            text-align: left;
+            position: relative;
+            border-left: 5px solid var(--primary);
+            border-top: 1px solid var(--neutral);
+            border-right: 1px solid var(--neutral);
+            border-bottom: 1px solid var(--neutral);
+        }
+        
+        .demo-note strong {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        
+        .demo-note .fa-info-circle {
+            color: var(--primary);
+            margin-right: var(--space-sm);
+            font-size: 16px;
+        }
+        
+        .user-status {
+            display: none;
+            align-items: center;
+            margin-left: 20px;
+            color: var(--natgeo-white);
+        }
+        
+        .user-status.active {
+            display: flex;
+        }
+        
+        .user-status span {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, var(--danger) 0%, #8B2C1C 100%);
+            color: var(--natgeo-white);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(162, 60, 38, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #8B2C1C 0%, var(--danger) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(162, 60, 38, 0.4);
+        }
+        
+        /* Fix for broken images */
+        .feature-img img,
+        .gallery-box img,
+        .carousel-slide img,
+        .home__slide__image img,
+        .home__thumbnail__image img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Interactive styles */
+        .feature-box {
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .gallery-box {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .gallery-box:hover {
+            transform: scale(1.05);
+        }
+        
+        .user-review {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .user-review:hover {
+            transform: translateY(-3px);
+        }
+        
+        /* Button animations */
+        .cta-btn, .booking-btn {
+            transition: all 0.3s;
+        }
+        
+        .cta-btn:hover, .booking-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Search bar animation */
+        .home-search input {
+            transition: box-shadow 0.3s;
+        }
+        
+        .home-search input:focus {
+            box-shadow: 0 0 0 3px var(--primary);
+            border-color: var(--primary);
+        }
+        
+        /* Responsive fixes */
+        @media (max-width: 768px) {
+            .nav-link.restricted-link::after {
+                top: -30px;
+                font-size: 11px;
+                padding: 5px 12px;
+            }
+            
+            .access-modal-content {
+                padding: var(--space-lg) var(--space-md);
+                margin: var(--space-md);
+            }
+            
+            .access-icon {
+                font-size: 65px;
+            }
+            
+            .access-modal-content h2 {
+                font-size: 26px;
+            }
+            
+            .access-modal-content p {
+                font-size: 16px;
+                max-width: 100%;
+                margin-bottom: var(--space-lg);
+            }
+            
+            .access-modal-content .btn {
+                padding: var(--space-sm) var(--space-lg);
+                font-size: 16px;
+            }
+            
+            .close-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                top: var(--space-sm);
+                right: var(--space-sm);
+            }
+            
+            .demo-note {
+                margin-top: var(--space-lg);
+                padding: var(--space-sm);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .access-modal-content {
+                padding: var(--space-md) var(--space-sm);
+            }
+            
+            .access-icon {
+                font-size: 55px;
+            }
+            
+            .access-modal-content h2 {
+                font-size: 22px;
+            }
+            
+            .access-modal-content .btn {
+                padding: 12px 25px;
+                font-size: 15px;
+            }
+            
+            .access-modal-content p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<!-- Access Modal -->
+<div id="accessModal" class="access-modal">
+    <div class="access-modal-content">
+        <button class="close-btn" id="closeAccessModal">&times;</button>
+        <div class="access-icon-wrapper">
+            <div class="access-icon">
+                <i class="fa fa-lock"></i>
+            </div>
+        </div>
+        <h2 id="accessModalTitle">ACCESS REQUIRED</h2>
+        <p id="accessModalMessage">Login to unlock exclusive travel experiences and destinations</p>
+        <a href="../login.html" class="btn" id="goToLoginBtn">GO TO LOGIN</a>
+        <div class="demo-note">
+            <i class="fa fa-info-circle"></i>
+            <strong>Explorer's Tip:</strong> Use any credentials to login and begin your journey
+        </div>
+    </div>
+</div>
+
+<!-- Header Section -->
+<header class="header">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <!-- Brand/Logo -->
+            <a class="navbar-brand" href="index.html">
+                <span class="brand-glow">Vivas Trip</span>
+                <small class="slogan">Explore More. Worry Less.</small>
+            </a>
+            
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Menu -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Home - Always accessible -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">
+                            <i class="fa fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <!-- Book a Trip - Restricted -->
+                    <li class="nav-item">
+                        <a class="nav-link restricted-link" href="#" data-page="booking.html" data-message="Book a Trip">
+                            <i class="fa fa-plane me-1"></i>Book a Trip
+                        </a>
+                    </li>
+                    <!-- Custom Booking - Restricted -->
+                    <li class="nav-item">
+                        <a class="nav-link restricted-link" href="#" data-page="custom.html" data-message="Custom Booking">
+                            <i class="fa fa-cogs me-1"></i>Custom Booking
+                        </a>
+                    </li>
+                    <!-- Special Deals - Restricted -->
+                    <li class="nav-item">
+                        <a class="nav-link restricted-link" href="#" data-page="deals.html" data-message="Special Deals">
+                            <i class="fa fa-percent me-1"></i>Special Deals
+                        </a>
+                    </li>
+                    <!-- Maps - Restricted -->
+                    <li class="nav-item">
+                        <a class="nav-link restricted-link" href="#" data-page="maps.html" data-message="Maps">
+                            <i class="fa fa-map-marker me-1"></i>Maps
+                        </a>
+                    </li>
+                                <!-- Contact Us - Always accessible -->
+                <li class="nav-item">
+                    <a class="nav-link restricted-link" href="#" data-page="contact.html" data-message="Contact">
+                        <i class="fa fa-envelope me-1"></i>Contact Us
+                    </a>
+                </li>
+                                
+                <!-- Header Actions (Login/Logout) -->
+                <div class="header-actions ms-3 d-flex align-items-center">
+                    <a href="../login.html" class="login-btn" id="loginBtn">
+                        <i class="fa fa-user me-1"></i>Login
+                    </a>
+                    <div class="user-status" id="userStatus">
+                        <span id="usernameDisplay"></span>
+                        <button class="logout-btn" id="logoutBtn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home/Hero Section -->
+        <section class="home" id="home">
+            <!-- Search Bar in Home Page -->
+            <div class="home-search-container">
+                <div class="container">
+                    <div class="home-search-wrapper">
+                        <div class="input-group home-search">
+                            <input type="text" class="form-control" placeholder="🌍 Search Country or City..." id="searchInput">
+                            <button class="input-group-text btn" type="button" id="searchBtn">
+                                <i class="fa fa-search me-2"></i>Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search Popup -->
+            <div id="searchPopup" class="search-popup-overlay">
+                <div class="search-popup-content">
+                    <button class="search-popup-close" id="closeSearchPopup">
+                        <i class="fa fa-times"></i>
+                    </button>
+                    
+                    <div class="search-popup-header">
+                        <h2>Search Results</h2>
+                        <div class="search-query-display" id="searchQueryDisplay"></div>
+                    </div>
+                    
+                    <div id="searchResults" class="search-results-container">
+                        <!-- Search results will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="home__content">
+                <!-- Radio inputs for pure CSS slider -->
+                <input type="radio" name="slider" id="slide1" class="slide-radio" checked hidden>
+                <input type="radio" name="slider" id="slide2" class="slide-radio" hidden>
+                <input type="radio" name="slider" id="slide3" class="slide-radio" hidden>
+                <input type="radio" name="slider" id="slide4" class="slide-radio" hidden>
+                <input type="radio" name="slider" id="slide5" class="slide-radio" hidden>
+                <input type="radio" name="slider" id="slide6" class="slide-radio" hidden>
+                <input type="radio" name="slider" id="slide7" class="slide-radio" hidden>
+                <input type="radio" name="slider" id="slide8" class="slide-radio" hidden>
+                
+                <div class="home__slider">
+                    <div class="home__slider-wrapper">
+                        <!-- Slide 1 -->
+                        <article class="home__slide slide-1">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1968&q=80" alt="Adventure">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Embark  <br />on Unforgettable Adventures</h1>
+                                </div>
+                                <div class="text">
+                                    Are you ready to explore the world's most captivating destinations? 
+                                    Vivas Trip is your ultimate travel companion, offering a gateway to a world of 
+                                    enchanting experiences and breathtaking landscapes.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 2 -->
+                        <article class="home__slide slide-2">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80" alt="New Horizons">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Discover <br />New Horizons</h1>
+                                </div>
+                                <div class="text">
+                                    There's a whole world waiting for you, 
+                                    filled with new experiences and hidden gems. 
+                                    At Vivas Trip, we help you step beyond the ordinary and into the extraordinary. 
+                                    Discover new horizons and explore uncharted territories that will awaken your sense of wonder.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 3 -->
+                        <article class="home__slide slide-3">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Travel Stories">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Inspiring <br />Travel Stories</h1>
+                                </div>
+                                <div class="text">
+                                    Every destination has a story, and every journey is an adventure 
+                                    waiting to unfold. Vivas Trip is not just about destinations;
+                                    it's about creating stories that inspire and memories that last a
+                                    lifetime. Join us and be part of a world full of extraordinary 
+                                    tales and unforgettable moments.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 4 -->
+                        <article class="home__slide slide-4">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1434394354979-a235cd36269d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Adventure Awaits">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Your <br />Adventure Awaits</h1>
+                                </div>
+                                <div class="text">
+                                   Your next great adventure is calling. Vivas Trip is here to take you on a journey to the world's most awe-inspiring destinations. 
+                                   Whether you're traveling for relaxation, exploration, or thrill, your adventure awaits, and we are here to guide you every step of the way.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 5 -->
+                        <article class="home__slide slide-5">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Inner Explorer">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Unleash <br />Your Inner Explorer</h1>
+                                </div>
+                                <div class="text">
+                                    It's time to break free from the ordinary and discover the world as 
+                                    you've never seen it before. With Vivas Trip, you have the 
+                                    freedom to unleash your inner explorer. From hidden beaches to ancient 
+                                    ruins, embark on a journey that will awaken the true adventurer in you.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 6 -->
+                        <article class="home__slide slide-6">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Beyond Boundaries">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Travel <br />Beyond Boundaries</h1>
+                                </div>
+                                <div class="text">
+                                    Life is too short to stay in one place. 
+                                    Vivas Trip invites you to break 
+                                    boundaries and explore the world without limits. 
+                                    Go beyond the typical tourist spots and experience 
+                                    destinations that will broaden your perspectives 
+                                    and change the way you see the world.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 7 -->
+                        <article class="home__slide slide-7">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1546436836-07a91091f160?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="Dreams Take Flight">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Where <br />Dreams Take Flight</h1>
+                                </div>
+                                <div class="text">
+                                    At Vivas Trip, we turn your travel dreams into reality. 
+                                    Whether it's soaring over majestic landscapes or walking through vibrant 
+                                    cities, we offer a gateway to experiences that will elevate your travel 
+                                    dreams and make them take flight in ways you've always imagined.
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <!-- Slide 8 -->
+                        <article class="home__slide slide-8">
+                            <div class="home__slide__image">
+                                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="World Beauty">
+                            </div>
+                            <div class="home__slide__text">
+                                <div class="heading">
+                                    <h1>Unlock the Beauty<br /> of the World</h1>
+                                </div>
+                                <div class="text">
+                                   The world is full of breathtaking beauty, and Vivas Trip 
+                                   is your key to unlocking it. From snow-capped mountains 
+                                   to sun-kissed beaches, discover the beauty of nature, culture,
+                                    and history. Let us take you to places that will leave you in
+                                     awe and inspire a deeper connection to the world around you.
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                
+                <!-- Thumbnails - HORIZONTAL POSITIONING -->
+                <aside class="home__thumbnails">
+                    <div class="home__thumbnails-wrapper">
+                        <!-- Thumbnail 1 -->
+                        <label for="slide1" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1968&q=80" alt="Adventure Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 2 -->
+                        <label for="slide2" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80" alt="Horizons Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 3 -->
+                        <label for="slide3" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Stories Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 4 -->
+                        <label for="slide4" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1434394354979-a235cd36269d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Adventure Awaits Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 5 -->
+                        <label for="slide5" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Inner Explorer Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 6 -->
+                        <label for="slide6" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Beyond Boundaries Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 7 -->
+                        <label for="slide7" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1546436836-07a91091f160?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="Dreams Take Flight Thumbnail">
+                            </div>
+                        </label>
+                        
+                        <!-- Thumbnail 8 -->
+                        <label for="slide8" class="home__thumbnail">
+                            <div class="home__thumbnail__image">
+                                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="World Beauty Thumbnail">
+                            </div>
+                        </label>
+                    </div>
+                </aside>
+                
+                <button class="home__btn cta-btn primary-btn" id="startExploringBtn">Start Exploring</button>
+            </div>
+        </section>
+
+        <!-- Featured Travel Destinations Carousel (Small Size) -->
+<section class="featured-destinations-section">
+    <div class="container">
+        <h2 class="text-center mb-4">See The World With Us</h2>
+    </div>
+    
+    <div class="photo-carousel-small">
+        <div class="carousel-track" id="featuredCarouselTrack">
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1968&q=80" alt="Tropical Beach">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80" alt="Santorini Greece">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Maldives Bungalow">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1434394354979-a235cd36269d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Swiss Alps">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Mountain Hiking">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1505832018823-50331d70d237?q=80&w=2108&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Northern Lights">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1546436836-07a91091f160?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="New York City">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Tokyo City">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80" alt="Paris Eiffel Tower">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1589308078059-be1415eab4c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Machu Picchu">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2092&q=80" alt="Kyoto Temple">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Nepal Trekking">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80" alt="Lake Louise">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Mountain Lake">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="African Safari">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Hot Air Balloon">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2076&q=80" alt="Tropical Waterfall">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="Nature Landscape">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Amalfi Coast">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Desert Safari">
+            </div>
+        </div>
+        
+        <button class="carousel-control carousel-prev" id="featuredCarouselPrev">
+            <i class="fa fa-chevron-left"></i>
+        </button>
+        <button class="carousel-control carousel-next" id="featuredCarouselNext">
+            <i class="fa fa-chevron-right"></i>
+        </button>
+        
+        <div class="carousel-nav" id="featuredCarouselNav">
+            <!-- Navigation dots will be added by JavaScript -->
+        </div>
+    </div>
+</section>
+
+        <!-- Featured Destinations Section -->
+        <section class="features" id="destinations">
+            <div class="container">
+                <h1>Featured Destinations</h1>
+                <p class="section-subtitle">Discover handpicked destinations for unforgettable experiences</p>
+                <div class="row">
+                    <!-- Destination 1 -->
+                    <div class="col-md-4">
+                        <article class="feature-box">
+                            <div class="feature-img">
+                                <img src="https://images6.alphacoders.com/581/581153.jpg" alt="Los Angeles">
+                                <div class="price"><p>$78</p></div>
+                                <div class="rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-half-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                </div>
+                            </div>
+                            <div class="feature-details">
+                                <h4>Los Angeles</h4>
+                                <p>Experience the glamour and excitement of Los Angeles with its beautiful beaches, Hollywood attractions, and vibrant culture.</p>
+                                <div class="feature-meta">
+                                    <span><i class="fa fa-map-marker"></i> Los Angeles</span>
+                                    <span><i class="fa fa-sun-o"></i> 4 days</span>
+                                    <span><i class="fa fa-moon-o"></i> 3 nights</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!-- Destination 2 -->
+                    <div class="col-md-4">
+                        <article class="feature-box">
+                            <div class="feature-img">
+                                <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=2073&q=80" alt="Paris">
+                                <div class="price"><p>$92</p></div>
+                                <div class="rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-half-o"></i>
+                                </div>
+                            </div>
+                            <div class="feature-details">
+                                <h4>Paris</h4>
+                                <p>Discover the romance and beauty of Paris with its iconic landmarks, exquisite cuisine, and rich artistic heritage.</p>
+                                <div class="feature-meta">
+                                    <span><i class="fa fa-map-marker"></i> Paris</span>
+                                    <span><i class="fa fa-sun-o"></i> 5 days</span>
+                                    <span><i class="fa fa-moon-o"></i> 4 nights</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Destination 3 -->
+                    <div class="col-md-4">
+                        <article class="feature-box">
+                            <div class="feature-img">
+                                <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2094&q=80" alt="Tokyo">
+                                <div class="price"><p>$115</p></div>
+                                <div class="rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-half-o"></i>
+                                </div>
+                            </div>
+                            <div class="feature-details">
+                                <h4>Tokyo</h4>
+                                <p>Immerse yourself in the vibrant energy of Tokyo, where ancient traditions meet cutting-edge technology and pop culture.</p>
+                                <div class="feature-meta">
+                                    <span><i class="fa fa-map-marker"></i> Tokyo</span>
+                                    <span><i class="fa fa-sun-o"></i> 6 days</span>
+                                    <span><i class="fa fa-moon-o"></i> 5 nights</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Travel Gallery Section -->
+        <section class="gallery" id="gallery">
+            <div class="container">
+                <h1>Travel Gallery</h1>
+                <p class="section-subtitle">Explore stunning visuals from around the world</p>
+                <div class="row">
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.pexels.com/photos/14657727/pexels-photo-14657727.jpeg?cs=srgb&dl=pexels-solyartphotos-14657727.jpg&fm=jpg" alt="Los Angeles">
+                            <figcaption>Los Angeles</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=2073&q=80" alt="Paris">
+                            <figcaption>Paris</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2094&q=80" alt="Tokyo">
+                            <figcaption>Tokyo</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Dubai">
+                            <figcaption>Dubai</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80" alt="Santorini">
+                            <figcaption>Santorini</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Maldives">
+                            <figcaption>Maldives</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Switzerland">
+                            <figcaption>Switzerland</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-3">
+                        <figure class="gallery-box">
+                            <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80" alt="London">
+                            <figcaption>London</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Banner Section -->
+        <section class="banner" id="deals">
+            <div class="banner-highlights">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2>Get 30% Off on Top Destinations</h2>
+                            <p>Book your tickets before 31st March and avail 30% flat discount.</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <button class="booking-btn" id="bookNowBtn">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Feedback Section -->
+        <section class="users-feedback" id="reviews">
+            <div class="container">
+                <h1>Users Review</h1>
+                <p class="section-subtitle">See what our customers say about their experiences</p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <article class="user-review">
+                            <p>"Vivas Trip made my dream vacation come true! The service was exceptional and the destinations were breathtaking."</p>
+                            <h5>Pravel Sharma</h5>
+                            <small>Los Angeles</small>
+                        </article>
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80" alt="User 1">
+                    </div>
+
+                    <div class="col-md-4">
+                        <article class="user-review">
+                            <p>"Amazing experience from start to finish. The attention to detail and customer service was outstanding!"</p>
+                            <h5>Sneha Kapoor</h5>
+                            <small>Paris</small>
+                        </article>
+                        <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80" alt="User 2">
+                    </div>
+
+                    <div class="col-md-4">
+                        <article class="user-review">
+                            <p>"I've traveled with many companies, but Vivas Trip stands out for their professionalism and amazing deals."</p>
+                            <h5>John Doe</h5>
+                            <small>Tokyo</small>
+                        </article>
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80" alt="User 3">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+  <!-- Footer - Same as main page -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h4 class="brand-glow">Vivas Trip</h4>
+                    <p>Your trusted partner for unforgettable travel experiences. Discover the world with confidence and create memories that last a lifetime.</p>
+                </div>
+                <div class="col-md-3">
+                    <h4>Features</h4>
+                    <p>Deals and Offers</p>
+                    <p>Customer Reviews</p>
+                    <p>Cancellation Policy</p>
+                </div>
+                <div class="col-md-3">
+                    <h4>Quick Contact</h4>
+                    <p><i class="fa fa-phone-square"></i> 0917-123-4567</p>
+                    <p><i class="fa fa-envelope"></i> hello@vivastrip.com</p>
+                    <p><i class="fa fa-home"></i> 123 Travel Street, Makati City</p>
+                </div>
+                <div class="col-md-3">
+                    <h4>Follow Us</h4>
+                    <p><i class="fa fa-facebook-official"></i> Facebook</p>
+                    <p><i class="fa fa-youtube-play"></i> YouTube</p>
+                    <p><i class="fa fa-twitter"></i> Twitter</p>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Made with <i class="fa fa-heart"></i> by Vivas Trip Team</p>
+        </div>
+    </footer>
+    <!-- Chatbot Container -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" id="chatbotToggle">
+            <i class="fa fa-comments"></i>
+        </button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-title">Travel Assistant</div>
+                <button class="chatbot-close" id="chatbotClose">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    Hi! I'm your travel assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                Assistant is typing<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Ask me about travel...">
+                <button id="chatbotSend">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load ALL scripts only ONCE at the bottom -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <script>
+    // Access Control System
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const accessModal = document.getElementById('accessModal');
+        const closeAccessModal = document.getElementById('closeAccessModal');
+        const accessModalTitle = document.getElementById('accessModalTitle');
+        const accessModalMessage = document.getElementById('accessModalMessage');
+        const goToLoginBtn = document.getElementById('goToLoginBtn');
+        const userStatus = document.getElementById('userStatus');
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const startExploringBtn = document.getElementById('startExploringBtn');
+        const bookNowBtn = document.getElementById('bookNowBtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.getElementById('searchInput');
+        
+        // Function to shake an element
+        function shakeElement(element) {
+            element.classList.add('shake');
+            setTimeout(() => {
+                element.classList.remove('shake');
+            }, 600);
+        }
+        
+        // Check if user is logged in
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const username = localStorage.getItem('username');
+            
+            if (isLoggedIn && username) {
+                // User is logged in
+                userStatus.classList.add('active');
+                usernameDisplay.textContent = `Welcome, ${username}!`;
+                updateRestrictedLinks(true);
+            } else {
+                // User is not logged in
+                userStatus.classList.remove('active');
+                updateRestrictedLinks(false);
+            }
+        }
+        
+        // Update restricted links based on login status
+        function updateRestrictedLinks(isLoggedIn) {
+            const restrictedLinks = document.querySelectorAll('.restricted-link');
+            
+            restrictedLinks.forEach(link => {
+                if (isLoggedIn) {
+                    // User is logged in - enable links
+                    link.style.cursor = 'pointer';
+                    link.style.opacity = '1';
+                    
+                    // Remove any shake class
+                    link.classList.remove('shake');
+                    
+                    // Update click handler to navigate to pages
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        const page = this.getAttribute('data-page');
+                        if (page) {
+                            window.location.href = page;
+                        }
+                    };
+                } else {
+                    // User is not logged in
+                    link.style.cursor = 'pointer';
+                    link.style.opacity = '1';
+                    
+                    // Update click handler to show access modal with shake
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        const message = this.getAttribute('data-message');
+                        showAccessModal(`Access ${message}`, `You must login first to access ${message}.`);
+                        shakeElement(this);
+                    };
+                }
+            });
+        }
+        
+        // Show access modal
+        function showAccessModal(title, message) {
+            accessModalTitle.textContent = title;
+            accessModalMessage.textContent = message;
+            accessModal.classList.add('active');
+            
+            // Add escape key listener
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+        
+        // Hide access modal
+        function hideAccessModal() {
+            accessModal.classList.remove('active');
+            document.removeEventListener('keydown', handleEscapeKey);
+        }
+        
+        // Handle escape key
+        function handleEscapeKey(e) {
+            if (e.key === 'Escape') {
+                hideAccessModal();
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            checkLoginStatus();
+            alert('You have been logged out successfully.');
+        }
+        
+        // Event Listeners
+        closeAccessModal.addEventListener('click', hideAccessModal);
+        
+        // Close modal when clicking outside
+        accessModal.addEventListener('click', function(e) {
+            if (e.target === accessModal) {
+                hideAccessModal();
+            }
+        });
+        
+        // Logout button
+        logoutBtn.addEventListener('click', logout);
+        
+        // Start Exploring button
+        if (startExploringBtn) {
+            startExploringBtn.addEventListener('click', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                if (!isLoggedIn) {
+                    showAccessModal('Start Exploring', 'Login to unlock amazing destinations and start your journey!');
+                    shakeElement(this);
+                } else {
+                    window.location.href = 'booking.html';
+                }
+            });
+        }
+        
+        // Book Now button in banner
+        if (bookNowBtn) {
+            bookNowBtn.addEventListener('click', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                if (!isLoggedIn) {
+                    showAccessModal('Book Your Adventure', 'Login to book your dream trip and get exclusive deals!');
+                    shakeElement(this);
+                } else {
+                    window.location.href = 'booking.html';
+                }
+            });
+        }
+        
+        // Handle restricted navigation links
+        const restrictedLinks = document.querySelectorAll('.restricted-link');
+        restrictedLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const message = this.getAttribute('data-message');
+                
+                if (!isLoggedIn) {
+                    e.preventDefault();
+                    showAccessModal(`Access ${message}`, `Login required to access ${message} features.`);
+                    shakeElement(this);
+                }
+            });
+        });
+        
+        // Initialize
+        checkLoginStatus();
+        
+        // Fix: Remove the alert-based search and let search.js handle it
+        if (searchInput && searchBtn) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    if (searchInput.value.trim()) {
+                        // search.js will handle the actual search functionality
+                        searchBtn.click();
+                    }
+                }
+            });
+        }
+        
+        // Interactive gallery images
+        const galleryImages = document.querySelectorAll('.gallery-box');
+        galleryImages.forEach(box => {
+            box.addEventListener('click', function() {
+                const destination = this.querySelector('figcaption').textContent;
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                if (isLoggedIn) {
+                    if (confirm(`Would you like to book a trip to ${destination}?`)) {
+                        window.location.href = 'booking.html';
+                    }
+                } else {
+                    showAccessModal('Explore Destination', `Login to book your trip to ${destination}!`);
+                    shakeElement(this);
+                }
+            });
+        });
+        
+        // Interactive featured destinations
+        const featuredBoxes = document.querySelectorAll('.feature-box');
+        featuredBoxes.forEach(box => {
+            box.addEventListener('click', function() {
+                const destination = this.querySelector('h4').textContent;
+                const price = this.querySelector('.price p').textContent;
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                if (isLoggedIn) {
+                    if (confirm(`${destination} - ${price} per person\nBook this trip now?`)) {
+                        window.location.href = 'booking.html';
+                    }
+                } else {
+                    showAccessModal('Book Destination', `Login to book ${destination} and unlock amazing deals!`);
+                    shakeElement(this);
+                }
+            });
+        });
+        
+        // Carousel functionality for featured destinations
+        const featuredCarouselTrack = document.getElementById('featuredCarouselTrack');
+        const featuredCarouselPrev = document.getElementById('featuredCarouselPrev');
+        const featuredCarouselNext = document.getElementById('featuredCarouselNext');
+        
+        if (featuredCarouselTrack && featuredCarouselPrev && featuredCarouselNext) {
+            let currentPosition = 0;
+            const slides = featuredCarouselTrack.querySelectorAll('.carousel-slide');
+            const slideWidth = slides[0].offsetWidth;
+            const totalSlides = slides.length;
+            const visibleSlides = 4;
+            
+            // Calculate how many slides we can move
+            const maxPosition = -(totalSlides - visibleSlides) * slideWidth;
+            
+            featuredCarouselNext.addEventListener('click', function() {
+                if (currentPosition > maxPosition) {
+                    currentPosition -= slideWidth;
+                    featuredCarouselTrack.style.transform = `translateX(${currentPosition}px)`;
+                }
+            });
+            
+            featuredCarouselPrev.addEventListener('click', function() {
+                if (currentPosition < 0) {
+                    currentPosition += slideWidth;
+                    featuredCarouselTrack.style.transform = `translateX(${currentPosition}px)`;
+                }
+            });
+            
+            // Make carousel images interactive
+            slides.forEach(slide => {
+                slide.addEventListener('click', function() {
+                    const altText = this.querySelector('img').getAttribute('alt');
+                    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                    
+                    if (isLoggedIn) {
+                        if (confirm(`Would you like to explore ${altText}?`)) {
+                            window.location.href = 'booking.html';
+                        }
+                    } else {
+                        showAccessModal('Explore Destination', `Login to explore ${altText} and start your adventure!`);
+                        shakeElement(this);
+                    }
+                });
+            });
+        }
+        
+        console.log('Access control system initialized.');
+        console.log('Search functionality will be handled by search.js');
+        console.log('All login buttons redirect to: ../login.html');
+        
+        // Auto-check login status every 2 seconds
+        setInterval(checkLoginStatus, 2000);
+    });
+    </script>
+    
+    <!-- Include other scripts - Make sure search.js is loaded LAST so it can override if needed -->
+    <script src="maps.js"></script>
+    <script src="slider.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="featured-carousel.js"></script>
+    <!-- Load search.js LAST to ensure it handles search functionality properly -->
+    <script src="search.js"></script>
+</body>
+</html>

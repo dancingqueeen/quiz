@@ -1,0 +1,298 @@
+/* Enhanced Search Popup */
+.search-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.search-popup-content {
+    background: var(--natgeo-white);
+    border-radius: 20px;
+    width: 95%;
+    max-width: 900px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.3s ease;
+}
+
+.search-popup-close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: var(--natgeo-rust-red);
+    color: var(--natgeo-white);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.search-popup-close:hover {
+    background: var(--natgeo-dark-gray);
+    transform: rotate(90deg);
+}
+
+.search-popup-header {
+    background: linear-gradient(135deg, var(--natgeo-ocean-blue), var(--natgeo-earth-green));
+    color: var(--natgeo-white);
+    padding: var(--space-lg);
+    text-align: center;
+}
+
+.search-popup-header h2 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.8rem;
+}
+
+.search-query-display {
+    margin-top: var(--space-xs);
+    opacity: 0.9;
+    font-weight: 600;
+}
+
+.search-results-container {
+    padding: var(--space-lg);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Enhanced Search Results */
+.search-result-item {
+    background: var(--natgeo-white);
+    border: 2px solid var(--natgeo-light-gray);
+    border-radius: 15px;
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+    transition: all 0.3s ease;
+    display: flex;
+    gap: var(--space-lg);
+    align-items: flex-start;
+}
+
+.search-result-item:hover {
+    border-color: var(--natgeo-yellow);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.search-result-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.search-result-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.search-result-item:hover .search-result-image img {
+    transform: scale(1.1);
+}
+
+.search-result-details {
+    flex: 1;
+}
+
+.search-result-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.search-result-title h3 {
+    color: var(--natgeo-ocean-blue);
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.search-result-type {
+    background: var(--natgeo-yellow);
+    color: var(--natgeo-black);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.search-result-description {
+    color: var(--natgeo-dark-gray);
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+}
+
+.search-result-meta {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.search-result-meta span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--natgeo-dark-gray);
+    font-weight: 600;
+}
+
+.search-result-meta i {
+    color: var(--natgeo-ocean-blue);
+}
+
+.search-result-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.btn-read-more {
+    background: var(--natgeo-ocean-blue);
+    color: var(--natgeo-white);
+    border: none;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.btn-read-more:hover {
+    background: var(--natgeo-earth-green);
+    transform: translateY(-2px);
+    color: var(--natgeo-white);
+    text-decoration: none;
+}
+
+/* Loading State */
+.search-loading {
+    text-align: center;
+    padding: var(--space-xl);
+}
+
+.search-loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--natgeo-light-gray);
+    border-top: 4px solid var(--natgeo-yellow);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto var(--space-md);
+}
+
+/* No Results State */
+.search-no-results {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--natgeo-dark-gray);
+}
+
+.search-no-results i {
+    font-size: 4rem;
+    color: var(--natgeo-light-gray);
+    margin-bottom: var(--space-md);
+}
+
+.search-no-results h3 {
+    color: var(--natgeo-dark-gray);
+    margin-bottom: var(--space-sm);
+}
+
+.suggestions {
+    margin-top: var(--space-lg);
+}
+
+.suggestion-tags {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--space-md);
+}
+
+.suggestion-tag {
+    background: var(--natgeo-light-gray);
+    color: var(--natgeo-dark-gray);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    border: 2px solid transparent;
+}
+
+.suggestion-tag:hover {
+    background: var(--natgeo-yellow);
+    color: var(--natgeo-black);
+    transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .search-result-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .search-result-image {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .search-result-meta {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+    
+    .search-result-actions {
+        justify-content: center;
+    }
+    
+    .suggestion-tags {
+        flex-direction: column;
+        align-items: center;
+    }
+}

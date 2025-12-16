@@ -3,50 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - User Portal</title>
+    <title>Vivas Trip | Register - Start Your Adventure</title>
     <link rel="stylesheet" href="register.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button class="theme-btn">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+    
+    <!-- Animated Background -->
+    <div class="login-bg">
+        <div class="bg-pattern"></div>
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
+    </div>
+    
+    <!-- Back to Home -->
+    <a href="dummy/index.html" class="back-home">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+    
+    <!-- Main Container -->
     <div class="container">
-        <div class="form-card">
-            <div class="header">
-                <div class="icon">📋</div>
-                <h1>Create Account</h1>
-                <p class="subtitle">Fill in the form below to register</p>
+        <div class="form-container">
+            <!-- Brand Header -->
+            <div class="brand-header">
+                <div class="logo">
+                    <i class="fas fa-mountain-sun"></i>
+                </div>
+                <h1 class="gradient-text">Vivas Trip</h1>
+                <p>Explore More. Worry Less.</p>
             </div>
-            <a href="home.html" class="back-link">← Back to Home</a>
-            <form action="register_process.php" method="POST" enctype="multipart/form-data" class="reg-form">
-                <div class="form-group">
-                    <label for="completeName">Complete Name *</label>
-                    <input type="text" id="completeName" name="completeName" required>
+            
+            <!-- Register Card -->
+            <div class="register-card">
+                <!-- Journey Progress -->
+                <div class="journey-progress">
+                    <div class="progress-text">
+                        <h3>Start Your Journey</h3>
+                        <p>Create your account in simple steps</p>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="progress-step active">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Account</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Profile</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Complete</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="username">Email (Username) *</label>
-                    <input type="email" id="username" name="username" required>
-                    <div class="hint">We'll use this email as your username</div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" name="password" required>
-                    <div class="password-hint" id="passwordHint">Enter at least 8 characters</div>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password *</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                    <div class="match-hint" id="matchHint"></div>
-                </div>
-                <div class="form-group">
-                    <label for="profilePicture">Profile Picture</label>
-                    <input type="file" id="profilePicture" name="profilePicture" accept=".jpg,.jpeg">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="submit-btn">📝 Register Account</button>
-                </div>
+                
+                <!-- Register Form -->
+                <form action="register_process.php" method="POST" enctype="multipart/form-data" class="reg-form" id="registerForm">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <input type="text" id="completeName" name="completeName" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="input-hint">Enter your legal name as it appears on official documents</div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <input type="email" id="username" name="username" placeholder="Enter your email address" required>
+                        </div>
+                        <div class="input-hint">We'll send a confirmation email to this address</div>
+                    </div>
+                    
+                    <!-- Password with Strength Meter -->
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" id="password" name="password" placeholder="Create a strong password" required minlength="8">
+                            <span class="password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        
+                        <!-- Password Strength Container -->
+                        <div class="password-strength-container" id="passwordStrengthContainer">
+                            <div class="strength-header">
+                                <span class="strength-label">Password Strength</span>
+                                <span class="strength-value">
+                                    <span class="strength-text" id="strengthText">Weak</span>
+                                    <span class="strength-score" id="strengthScore">0/100</span>
+                                </span>
+                            </div>
+                            <div class="strength-bars">
+                                <div class="strength-bar" id="strengthBar1"></div>
+                                <div class="strength-bar" id="strengthBar2"></div>
+                                <div class="strength-bar" id="strengthBar3"></div>
+                                <div class="strength-bar" id="strengthBar4"></div>
+                                <div class="strength-bar" id="strengthBar5"></div>
+                            </div>
+                            <div class="strength-requirements">
+                                <div class="requirement" id="reqLength">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>At least 8 characters</span>
+                                </div>
+                                <div class="requirement" id="reqLowercase">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Lowercase letter (a-z)</span>
+                                </div>
+                                <div class="requirement" id="reqUppercase">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Uppercase letter (A-Z)</span>
+                                </div>
+                                <div class="requirement" id="reqNumber">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Number (0-9)</span>
+                                </div>
+                                <div class="requirement" id="reqSpecial">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Special character (!@#$%^&*)</span>
+                                </div>
+                            </div>
+                            <div class="password-hints">
+                                <div class="hint" id="passwordHint">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>Start typing to see password strength</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Password Tips -->
+                        <div class="password-tips">
+                            <h4><i class="fas fa-lightbulb"></i> Password Tips:</h4>
+                            <ul>
+                                <li>Use at least 12 characters for maximum security</li>
+                                <li>Mix uppercase and lowercase letters</li>
+                                <li>Include numbers and special characters</li>
+                                <li>Avoid common words and personal information</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                            <span class="password-toggle" id="confirmPasswordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="match-indicator" id="matchIndicator">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Passwords must match</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Picture Upload -->
+                    <div class="form-group">
+                        <div class="upload-section">
+                            <h4><i class="fas fa-camera"></i> Profile Picture (Optional)</h4>
+                            <div class="file-upload" id="fileUploadArea">
+                                <div class="upload-content">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div class="upload-text">
+                                        <h4>Drag & drop your photo here</h4>
+                                        <p>or click to browse files</p>
+                                        <p class="upload-subtext">JPG/JPEG, max 2MB • Recommended: 500x500px</p>
+                                    </div>
+                                    <button type="button" class="upload-btn" id="uploadBtn">
+                                        <i class="fas fa-upload"></i>
+                                        Choose File
+                                    </button>
+                                </div>
+                                <input type="file" id="profilePicture" name="profilePicture" accept=".jpg,.jpeg,.png" class="file-input">
+                            </div>
+                            <div class="preview-container" id="previewContainer">
+                                <img src="" alt="Preview" class="preview-image" id="previewImage">
+                                <div class="preview-info">
+                                    <div class="preview-name" id="previewName"></div>
+                                    <a href="#" class="change-photo" id="changePhoto">Change photo</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terms and Conditions -->
+                    <div class="form-group">
+                        <div class="terms-card">
+                            <div class="terms-header">
+                                <i class="fas fa-file-contract"></i>
+                                <h4>Terms & Conditions</h4>
+                            </div>
+                            <div class="terms-content">
+                                <p>By creating an account, you agree to:</p>
+                                <ul>
+                                    <li>Our <a href="#" class="terms-link">Terms of Service</a></li>
+                                    <li>Our <a href="#" class="terms-link">Privacy Policy</a></li>
+                                    <li>Receive important account notifications via email</li>
+                                    <li>Cookies and similar technologies as described in our policy</li>
+                                </ul>
+                                <p>You can manage your preferences in your account settings at any time.</p>
+                            </div>
+                            <div class="terms-checkbox">
+                                <div class="checkbox-container">
+                                    <input type="checkbox" id="terms" name="terms" required>
+                                    <span class="checkmark"></span>
+                                </div>
+                                <label for="terms">
+                                    I have read and agree to the Terms & Conditions
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Features -->
+                    <div class="security-features">
+                        <h4><i class="fas fa-shield-alt"></i> Account Security Features</h4>
+                        <div class="features-grid">
+                            <div class="feature">
+                                <i class="fas fa-key"></i>
+                                <span>Strong Password Encryption</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-fingerprint"></i>
+                                <span>Two-Factor Authentication Available</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-history"></i>
+                                <span>Login Activity Monitoring</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bell"></i>
+                                <span>Security Alert Notifications</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn primary-btn" id="submitBtn">
+                        <span class="btn-text">Create Your Account</span>
+                        <span class="btn-loading" id="btnLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Creating Account...
+                        </span>
+                        <i class="fas fa-arrow-right btn-icon"></i>
+                    </button>
+                    
+                    <!-- Registration Benefits -->
+                    <div class="register-benefits">
+                        <h4>
+                            <i class="fas fa-gift"></i>
+                            Start Your Journey With Premium Benefits
+                        </h4>
+                        <div class="benefits-grid">
+                            <div class="benefit">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="benefit-content">
+                                    <h5>Exclusive Discounts</h5>
+                                    <p>Up to 30% off on selected adventures</p>
+                                </div>
+                            </div>
+                            <div class="benefit">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <div class="benefit-content">
+                                    <h5>Priority Support</h5>
+                                    <p>24/7 premium customer service</p>
+                                </div>
+                            </div>
+                            <div class="benefit">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="benefit-content">
+                                    <h5>Early Access</h5>
+                                    <p>Be first to book new destinations</p>
+                                </div>
+                            </div>
+                            <div class="benefit">
+                                <div class="benefit-icon">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <div class="benefit-content">
+                                    <h5>Personalized Trips</h5>
+                                    <p>Custom recommendations just for you</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Login Link -->
                 <div class="login-link">
-                    Already have an account? <a href="login.html">Login here</a>
+                    <p>Already have an account? Continue your journey</p>
+                    <a href="login.html" class="login-cta">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Sign In to Your Account</span>
+                    </a>
                 </div>
-            </form>
+                
+                <!-- Trust Indicators -->
+                <div class="trust-indicators">
+                    <div class="trust-item">
+                        <i class="fas fa-lock"></i>
+                        <span>SSL Secured</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fas fa-shield-check"></i>
+                        <span>GDPR Compliant</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Privacy Protected</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <i class="fas fa-compass fa-spin"></i>
+            </div>
+            <h3>Creating Your Account</h3>
+            <p>Setting up your Vivas Trip adventure profile...</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Terms -->
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Terms & Conditions</h3>
+                <button class="modal-close" id="closeTermsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Terms content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="acceptTerms">I Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="register.js"></script>
 </body>
 </html>

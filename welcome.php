@@ -13,12 +13,11 @@ $stmt = sqlsrv_query($dbConnection, $sql, $params);
 $user = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 $name = $user['CompleteName'];
-$photo = $user['File_Path'] ?? '';
+$photo = $user['File_Path'];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome</title>
     <style>
         body { 
             display: flex; 
@@ -34,7 +33,6 @@ $photo = $user['File_Path'] ?? '';
             padding: 40px; 
             border-radius: 10px; 
             text-align: center; 
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 { 
             font-size: 24px; 
@@ -43,24 +41,16 @@ $photo = $user['File_Path'] ?? '';
         .photo { 
             width: 150px; 
             height: 150px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 3px solid #4a6fa5; 
             margin-bottom: 20px;
         }
         .btn { 
             background: #dc3545; 
-            color: white; 
-            border: none; 
             padding: 10px 20px; 
             border-radius: 5px; 
             cursor: pointer; 
             text-decoration: none; 
-            display: inline-block;
         }
-        .btn:hover {
-            background: #c82333;
-        }
+
     </style>
 </head>
 <body>

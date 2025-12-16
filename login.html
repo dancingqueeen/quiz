@@ -3,35 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - User Portal</title>
+    <title>Vivas Trip | Login - Adventure Awaits</title>
     <link rel="stylesheet" href="login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
+
+    
+    <!-- Animated Background -->
+    <div class="login-bg">
+        <div class="bg-pattern"></div>
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
+        <div class="floating-element floating-3"></div>
+    </div>
+    
+    <!-- Back to Home -->
+    <a href="dummy/index.html" class="back-home">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+    
+    <!-- Main Container -->
     <div class="container">
-        <div class="login-card">
-            <div class="header">
-                <div class="icon">🔐</div>
-                <h1>Login</h1>
-                <p class="subtitle">Enter your credentials to continue</p>
+        <div class="form-container">
+            <!-- Brand Header -->
+            <div class="brand-header">
+                <div class="logo">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <h1 class="gradient-text">Vivas Trip</h1>
+                <p>Your Journey to Extraordinary Experiences</p>
             </div>
-            <a href="home.html" class="back-link">← Back to Home</a>
-            <form action="login.php" method="POST" class="login-form">
-                <div class="form-group">
-                    <label for="username">Email (Username) *</label>
-                    <input type="email" id="username" name="username" required>
+            
+            <!-- Login Card -->
+            <div class="login-card premium-card">
+                <!-- Welcome Message -->
+                <div class="welcome-message">
+                    <h2>Welcome Back Adventurer</h2>
+                    <p>Sign in to continue your journey and access exclusive travel experiences</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" name="password" required>
+                
+                <!-- Login Form -->
+                <form action="login.php" method="POST" class="login-form" id="loginForm">
+                    <!-- Email Input -->
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <input type="email" id="username" name="username" placeholder="Enter your email" required>
+                            <div class="input-valid-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                        <div class="input-hint" id="emailHint">Enter your registered email address</div>
+                    </div>
+                    
+                    <!-- Password Input -->
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            <div class="password-actions">
+                                <span class="password-toggle" id="passwordToggle">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                                <span class="password-strength-indicator" id="passwordStrength">
+                                    <i class="fas fa-circle"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Password Strength Preview -->
+                        <div class="password-preview" id="passwordPreview">
+                            <div class="preview-header">
+                                <span>Password Security Check</span>
+                                <span class="preview-score" id="previewScore">0%</span>
+                            </div>
+                            <div class="preview-bars">
+                                <div class="preview-bar" id="previewBar1"></div>
+                                <div class="preview-bar" id="previewBar2"></div>
+                                <div class="preview-bar" id="previewBar3"></div>
+                                <div class="preview-bar" id="previewBar4"></div>
+                            </div>
+                            <div class="preview-hint" id="previewHint">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Password must be at least 8 characters</span>
+                            </div>
+                        </div>
+                    </div>  
+
+                    
+                    <!-- Login Attempts Warning -->
+                    <div class="attempts-warning" id="attemptsWarning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Multiple failed attempts may temporarily lock your account</span>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="login-btn primary-btn" id="loginBtn">
+                        <span class="btn-text">Sign In to Your Account</span>
+                        <span class="btn-loading" id="btnLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Signing In...
+                        </span>
+                        <i class="fas fa-arrow-right btn-icon"></i>
+                    </button>
+                    
+                    <!-- Divider Removed -->
+                    
+                    <!-- Informative Section - Travel Tips -->
+                    <div class="info-section">
+                        <h4><i class="fas fa-lightbulb"></i> Travel Smart Tips</h4>
+                        <div class="tips-grid">
+                            <div class="tip-item">
+                                <i class="fas fa-passport"></i>
+                                <div>
+                                    <h5>Passport Ready</h5>
+                                    <p>Ensure your passport has at least 6 months validity</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-sun"></i>
+                                <div>
+                                    <h5>Weather Wise</h5>
+                                    <p>Check seasonal weather patterns before booking</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-wallet"></i>
+                                <div>
+                                    <h5>Budget Smart</h5>
+                                    <p>Allocate 20% extra for unexpected travel expenses</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <div>
+                                    <h5>Travel Safe</h5>
+                                    <p>Always purchase travel insurance for peace of mind</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Features -->
+                    <div class="security-features">
+                        <h4><i class="fas fa-shield-alt"></i> Our Security Commitment</h4>
+                        <div class="features-grid">
+                            <div class="feature">
+                                <i class="fas fa-lock"></i>
+                                <span>Bank-Level Encryption</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-user-check"></i>
+                                <span>Two-Factor Authentication</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-history"></i>
+                                <span>Login Activity Monitoring</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-globe"></i>
+                                <span>Global Security Standards</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Informative Stats -->
+                <div class="stats-section">
+                    <h4><i class="fas fa-chart-line"></i> Vivas Trip in Numbers</h4>
+                    <div class="stats-grid">
+          
+                        <div class="stat">
+                            <div class="stat-number">100+</div>
+                            <div class="stat-label">Countries Covered</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support Available</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">4.9★</div>
+                            <div class="stat-label">Customer Rating</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="login-btn">🔐 Login</button>
-                </div>
+                
+                <!-- Register Link -->
                 <div class="register-link">
-                    Don't have an account? <a href="register.html">Register here</a>
+                    <p>New to Vivas Trip? Start your adventure today</p>
+                    <a href="register.html" class="register-cta">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Create Free Account</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
-            </form>
+                
+                <!-- Trust Badges -->
+                <div class="trust-badges">
+                    <div class="badge">
+                        <i class="fas fa-lock"></i>
+                        <span>SSL Secured</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-shield-check"></i>
+                        <span>GDPR Compliant</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-award"></i>
+                        <span>Trusted Partner</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>Global Network</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <i class="fas fa-compass fa-spin"></i>
+            </div>
+            <h3>Signing You In</h3>
+            <p>Accessing your Vivas Trip account...</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Security Modal -->
+    <div class="modal-overlay" id="securityModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-shield-alt"></i> Security Notice</h3>
+                <button class="modal-close" id="closeSecurityModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="security-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>For your security, please ensure:</p>
+                    <ul>
+                        <li>You're using a secure, private network</li>
+                        <li>Your password is strong and unique</li>
+                        <li>Two-factor authentication is enabled</li>
+                        <li>You're logging in from a trusted device</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="dismissSecurity">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="login.js"></script>
 </body>
 </html>
